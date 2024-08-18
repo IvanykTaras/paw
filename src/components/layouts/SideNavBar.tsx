@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import * as FaIcons from "react-icons/fa";
-import { Menu, MenuItem, Sidebar, SubMenu } from "react-pro-sidebar";
+import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import {  useState } from "react";
 import styled from "styled-components";
 
@@ -20,9 +20,8 @@ const SideNavBar: React.FC = ()=>{
                 <FaIcons.FaBars/>
             </button>
             <Menu style={{opacity: collapse ? 0 : 1}}>
+                <MenuItem component={<Link to="/" />}>Home</MenuItem>
                 <MenuItem component={<Link to="/projects" />}>Projects</MenuItem>
-                <MenuItem component={<Link to="/task/create" />}>task create</MenuItem>
-                <MenuItem component={<Link to="/functionality/create" />}>functionality create</MenuItem>
                 <MenuItem component={<Link to="/settings" />}>Setting</MenuItem>
             </Menu>
         </Sidebar>

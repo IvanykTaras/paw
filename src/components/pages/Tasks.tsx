@@ -1,5 +1,4 @@
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { Canban } from "../layouts/Canban";
 import { ActionPanelElement } from "../layouts/ActionPanelElement";
 import { Alert, Button, Card, Col, Container, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import styled from "styled-components";
@@ -9,8 +8,6 @@ import { TaskAPI } from "../../services/TaskAPI";
 import { Task } from "../../models/Task";
 import { Variant } from "../../enums/BootrapEnums";
 import Loading from "react-loading";
-import { ProjectAPI } from "../../services/ProjectAPI";
-import { Project } from "../../models/Project";
 import { MarginElements } from "../layouts/MarginElements";
 import { Status } from "../../enums/Status";
 import { ITask } from "../../interfaces/ITask";
@@ -113,7 +110,9 @@ export const Tasks: React.FC = ()=>{
             <Row className='d-flex justify-content-around'>
                 <Column md={3}>
                     <ColumnTitle>To Do</ColumnTitle>
-                
+                    
+                    <MarginElements>
+                        
                     {tasksFilteredTodo && tasksFilteredTodo.length > 0 ?  tasksFilteredTodo.map( (t:Task, i:number)=>{
                         return (
                         <CustomCard key={i}>
@@ -145,14 +144,14 @@ export const Tasks: React.FC = ()=>{
                             </Card.Footer>
                         </CustomCard>)
                     }) : <Alert variant={Variant.info}>nothing</Alert>}
-
-                    
+                    </MarginElements>
 
 
                 </Column>
                 <Column md={3}>
                     <ColumnTitle>Doing</ColumnTitle>
                     
+                    <MarginElements>
                     {tasksFilteredDoing && tasksFilteredDoing.length > 0 ?  tasksFilteredDoing.map( (t:Task, i:number)=>{
                         return (
                         <CustomCard key={i}>
@@ -184,10 +183,12 @@ export const Tasks: React.FC = ()=>{
                             </Card.Footer>
                         </CustomCard>)
                     }) : <Alert variant={Variant.info}>nothing</Alert>}
+                    </MarginElements>
                 </Column>
                 <Column md={3}>
                     <ColumnTitle>Done</ColumnTitle>
                     
+                    <MarginElements>
                     {tasksFilteredDone && tasksFilteredDone.length > 0 ?  tasksFilteredDone.map( (t:Task, i:number)=>{
                         return (
                         <CustomCard key={i}>
@@ -219,6 +220,7 @@ export const Tasks: React.FC = ()=>{
                             </Card.Footer>
                         </CustomCard>)
                     }) : <Alert variant={Variant.info}>nothing</Alert>}
+                    </MarginElements>
                 </Column>
             </Row>
         </BoardContainer>

@@ -15,9 +15,6 @@ import './css/App.css'
 import "./css/SideNavBar.css"
 import 'animate.css';
 
-import { StoryLayout } from './components/pages/StoryLayout.tsx';
-import { TaskInfo } from './components/pages/TaskInfo.tsx';
-import { Canban } from './components/layouts/Canban.tsx';
 import { Settings } from './components/pages/Settings.tsx';
 import { Projects } from './components/pages/Projects.tsx';
 import { CreateProject } from './components/pages/CreateProject.tsx';
