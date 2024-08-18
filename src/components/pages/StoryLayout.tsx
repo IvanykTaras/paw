@@ -1,12 +1,13 @@
 import { Alert, Button, Card, Container, Form, InputGroup, Navbar } from 'react-bootstrap';
 import styled from 'styled-components';
-import { StoryAPI } from '../services/StoryAPI';
-import { Story } from '../models/Story';
-import { Status } from '../enums/Status';
-import { useStatusToString } from '../utils/useStatusToString';
+import { StoryAPI } from '../../services/StoryAPI';
+import { Story } from '../../models/Story';
+import { Status } from '../../enums/Status';
+import { useStatusToString } from '../../utils/useStatusToString';
 import { useState } from 'react';
+import { ActionPanelElement } from '../layouts/ActionPanelElement';
 
-type filterOption = Status | "all";
+
 
 export const StoryLayout: React.FC = ()=>{
 
@@ -25,9 +26,9 @@ export const StoryLayout: React.FC = ()=>{
     
 
     return <>
-        <Container fluid>
-            <Navbar>
-                <NavElement>
+        
+            <ActionPanelElement>
+             
                     <Form style={{marginRight: "0 1rem"}}>
                         <InputGroup>
                             <InputGroup.Text >Status</InputGroup.Text>
@@ -39,9 +40,6 @@ export const StoryLayout: React.FC = ()=>{
                             </Form.Select>
                         </InputGroup>
                     </Form>
-                </NavElement>
-                
-                <NavElement>
                     <Form>
                         <InputGroup>
                         <InputGroup.Text>Story name</InputGroup.Text>
@@ -51,9 +49,6 @@ export const StoryLayout: React.FC = ()=>{
                             />
                         </InputGroup>
                     </Form>
-                </NavElement>
-
-                <NavElement>
                     <Form>
                         <InputGroup>
                         <InputGroup.Text>Story description</InputGroup.Text>
@@ -63,8 +58,8 @@ export const StoryLayout: React.FC = ()=>{
                             />
                         </InputGroup>
                     </Form>
-                </NavElement>
-            </Navbar>
+                    <Button variant='danger'>asdf</Button>
+            </ActionPanelElement>
 
             {StoryAPI.getAll()
                 .filter(filterStatusCb)
@@ -82,7 +77,7 @@ export const StoryLayout: React.FC = ()=>{
                 )
             )}
 
-        </Container>
+       
     </>
 }
 

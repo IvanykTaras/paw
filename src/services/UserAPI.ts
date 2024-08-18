@@ -1,0 +1,21 @@
+import { ITask } from "../interfaces/ITask";
+import { Task } from "../models/Task";
+import { User } from "../models/User";
+
+
+export class UserAPI {
+    private static ulr = "http://localhost:8000/api/user"
+
+
+   
+
+    static async getById(id:string): Promise<User> {
+        
+        const response = await fetch(this.ulr + "/" + id,{method: "GET"})
+        const u: User = await response.json();
+        console.dir(u)
+        return new User(u._id,u.name,u.surname,u.role,u.password);
+    }
+
+
+}

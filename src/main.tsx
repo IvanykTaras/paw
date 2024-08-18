@@ -8,9 +8,23 @@ import {
 } from "react-router-dom";
 
 //css
+import "./css/normalize.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css'
-import { StoryLayout } from './components/StoryLayout.tsx';
+import './css/index.css'
+import './css/App.css'
+import "./css/SideNavBar.css"
+import 'animate.css';
+
+import { StoryLayout } from './components/pages/StoryLayout.tsx';
+import { TaskInfo } from './components/pages/TaskInfo.tsx';
+import { Canban } from './components/layouts/Canban.tsx';
+import { Settings } from './components/pages/Settings.tsx';
+import { Projects } from './components/pages/Projects.tsx';
+import { CreateProject } from './components/pages/CreateProject.tsx';
+import { CreateTask } from './components/pages/CreateTask.tsx';
+import { CreateFunctionality } from './components/pages/CreateFunctionality.tsx';
+import { Functionalities } from './components/pages/Functionalities.tsx';
+import { Tasks } from './components/pages/Tasks.tsx';
 
 const router = createBrowserRouter([
   {
@@ -18,20 +32,32 @@ const router = createBrowserRouter([
     element: <App/>,
     children: [
       { 
-        path: "/storyLayout",
-        element: <StoryLayout/>
+        path: "/projects",
+        element: <Projects/>,
+      },
+      {
+        path: "/projects/create",
+        element: <CreateProject/>
+      },
+      {
+        path: "/functionality/:projectId",
+        element: <Functionalities/>
+      },
+      {
+        path: "/functionality/:projectId/create",
+        element: <CreateFunctionality/>
+      },
+      {
+        path: "/task/:functionalityId",
+        element: <Tasks/>
+      },
+      {
+        path: "/task/:functionalityId/create",
+        element: <CreateTask/>
       },
       { 
-        path: "/2",
-        element: <div>element 2</div>
-      },
-      { 
-        path: "/3",
-        element: <div>element 3</div>
-      },
-      { 
-        path: "/3",
-        element: <div>element 3</div>
+        path: "/settings",
+        element: <Settings/>
       },
     ]
   },
