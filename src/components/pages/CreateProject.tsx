@@ -2,14 +2,16 @@ import { Button, Card, Form } from "react-bootstrap"
 import { CustomCard } from "../layouts/CustomCard"
 import { ProjectAPI } from "../../services/ProjectAPI"
 import { Project } from "../../models/Project"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Loadding } from "../layouts/Loadding"
 import { IProject } from "../../interfaces/IProject"
 import { CreateForm } from "../layouts/CreateForm"
 import { useNavigate } from "react-router-dom"
+import { userAuthContext } from "../../App"
 
 export const CreateProject: React.FC = ()=>{
     const navigate = useNavigate();
+    const userAuth = useContext(userAuthContext)
     const [loadding, setLoadding] = useState<boolean>(false);
     const [formData, setFormData] = useState<IProject>({
         name: "",
@@ -19,6 +21,7 @@ export const CreateProject: React.FC = ()=>{
 
     const create = async ()=>{
         setLoadding(true);
+        ProjectAPI.accessToken = userAuth.values.accessToken;
         await ProjectAPI.create(formData)
         setLoadding(false);
         navigate("/projects");

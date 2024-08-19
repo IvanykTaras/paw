@@ -1,6 +1,6 @@
 import { Button, Card, Form, InputGroup } from "react-bootstrap"
 import { CustomCard } from "../layouts/CustomCard"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Loadding } from "../layouts/Loadding"
 import { IProject } from "../../interfaces/IProject"
 import { CreateForm } from "../layouts/CreateForm"
@@ -10,11 +10,12 @@ import { Priority } from "../../enums/Priority"
 import { MarginElements } from "../layouts/MarginElements"
 import { FunctionalityAPI } from "../../services/FunctionalityAPI"
 import { useNavigate, useParams } from "react-router-dom"
+import { userAuthContext } from "../../App"
 
 export const CreateFunctionality: React.FC = ()=>{
     
     const [loadding, setLoadding] = useState<boolean>(false);
-
+    const userAuth = useContext(userAuthContext);
     const navigate = useNavigate();
     const params = useParams();
 
@@ -24,13 +25,14 @@ export const CreateFunctionality: React.FC = ()=>{
             description: '',
             priority: Priority.Low,
             projectId: params.projectId as string,
-            userId: '66b692a0061d6ab9a95a22ec'
+            userId: userAuth.values.userId
         },
         onSubmit: (values)=>{}
     });
 
     const create = async ()=>{
         setLoadding(true);
+        FunctionalityAPI.accessToken = userAuth.values.accessToken;
         await FunctionalityAPI.create(formik.values)
         setLoadding(false);
         navigate(`/functionality/${params.projectId}`);

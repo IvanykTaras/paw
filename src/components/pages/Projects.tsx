@@ -1,7 +1,7 @@
 import { Alert, Button, Card, Form, InputGroup } from "react-bootstrap"
 import { ActionPanelElement } from "../layouts/ActionPanelElement"
 import { Status } from "../../enums/Status";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MarginElements } from "../layouts/MarginElements";
 import { CustomCard } from "../layouts/CustomCard";
@@ -10,6 +10,7 @@ import { Loadding } from "../layouts/Loadding";
 import { Project } from "../../models/Project";
 import { useFormik } from "formik";
 import { Variant } from "../../enums/BootrapEnums";
+import { userAuthContext } from "../../App";
 
 
 
@@ -17,6 +18,7 @@ import { Variant } from "../../enums/BootrapEnums";
 
 export const Projects: React.FC = ()=>{
 
+    const userAuth = useContext(userAuthContext)
     const [projects, setProjects] = useState<Project[] | null>(null);
 
     //Loading
@@ -41,6 +43,7 @@ export const Projects: React.FC = ()=>{
     useEffect(()=>{
         (async ()=>{
             setLoadding(true)
+            ProjectAPI.accessToken = userAuth.values.accessToken;
             const projects = await ProjectAPI.getAll()
             setProjects(projects)
             setLoadding(false)

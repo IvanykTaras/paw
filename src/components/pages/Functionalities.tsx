@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Form, InputGroup, Button, Card, Alert } from "react-bootstrap";
 import { Link, useLoaderData, useParams } from "react-router-dom";
 import { Project } from "../../models/Project";
@@ -13,9 +13,11 @@ import { FunctionalityAPI } from "../../services/FunctionalityAPI";
 import { Variant } from "../../enums/BootrapEnums";
 import { Status } from "../../enums/Status";
 import { Priority } from "../../enums/Priority";
+import { userAuthContext } from "../../App";
 
 export const Functionalities: React.FC = ()=>{
 
+    const userAuth = useContext(userAuthContext)
     const [functionalities, setfunctionalities] = useState<Functionality[] | null>(null);
 
     //Loading
@@ -49,6 +51,7 @@ export const Functionalities: React.FC = ()=>{
     useEffect(()=>{
         (async ()=>{
             setLoadding(true)
+            FunctionalityAPI.accessToken = userAuth.values.accessToken;
             const funcs = await FunctionalityAPI.getAll()
             setfunctionalities(funcs)
             setLoadding(false)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createContext, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 
@@ -22,12 +22,17 @@ import { CreateTask } from './components/pages/CreateTask.tsx';
 import { CreateFunctionality } from './components/pages/CreateFunctionality.tsx';
 import { Functionalities } from './components/pages/Functionalities.tsx';
 import { Tasks } from './components/pages/Tasks.tsx';
+import { Login } from './components/pages/Login.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App/>,
     children: [
+      { 
+        path: "/login",
+        element: <Login/>,
+      },
       { 
         path: "/projects",
         element: <Projects/>,
@@ -57,11 +62,13 @@ const router = createBrowserRouter([
         element: <Settings/>
       },
     ]
-  },
+  }
 ]);
+
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </React.StrictMode>
 )

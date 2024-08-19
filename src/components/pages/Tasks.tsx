@@ -3,7 +3,7 @@ import { ActionPanelElement } from "../layouts/ActionPanelElement";
 import { Alert, Button, Card, Col, Container, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import styled from "styled-components";
 import { CustomCard } from "../layouts/CustomCard";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TaskAPI } from "../../services/TaskAPI";
 import { Task } from "../../models/Task";
 import { Variant } from "../../enums/BootrapEnums";
@@ -15,9 +15,11 @@ import { Priority } from "../../enums/Priority";
 import { useFormik } from "formik";
 import { UserAPI } from "../../services/UserAPI";
 import { UserRole } from "../../enums/UserRole";
+import { userAuthContext } from "../../App";
 
 export const Tasks: React.FC = ()=>{
 
+    const userAuth = useContext(userAuthContext);
     const [show, setShow] = useState(false);
     const {functionalityId} = useParams();
     const [tasks, setTasks] = useState<Task[] | null>( null );
@@ -29,6 +31,7 @@ export const Tasks: React.FC = ()=>{
 
         (async ()=>{
             setLoadding(true)
+            TaskAPI.accessToken = userAuth.values.accessToken;
             const tasksList = await TaskAPI.getAll() 
             setTasks(tasksList)
             console.log(tasksList)
@@ -51,6 +54,7 @@ export const Tasks: React.FC = ()=>{
     const showTask = async (id:string)=>{
         setShow(true)
         setLoadding(true)
+        TaskAPI.accessToken = userAuth.values.accessToken;
         const findTask = await TaskAPI.getById(id); 
         setFindTask(findTask);
         setLoadding(false)
@@ -70,7 +74,7 @@ export const Tasks: React.FC = ()=>{
         }
         const findUser = await UserAPI.getById(id);
         if(findUser.role === UserRole.DevOps || findUser.role === UserRole.Developer){
-            
+            TaskAPI.accessToken = userAuth.values.accessToken;
             await TaskAPI.update(newFindTask, findTask?._id as string); 
             showTask(findTask?._id as string);
             setLoadding(false)
@@ -92,6 +96,7 @@ export const Tasks: React.FC = ()=>{
             status: Status.Done,
             completionDate: new Date,
         }
+        TaskAPI.accessToken = userAuth.values.accessToken;
         await TaskAPI.update(newFindTask, findTask?._id as string); 
         showTask(findTask?._id as string);
         setLoadding(false)

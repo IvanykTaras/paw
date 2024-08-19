@@ -2,7 +2,7 @@ import { Button, Card, Form, Modal } from "react-bootstrap"
 import { CustomCard } from "../layouts/CustomCard"
 import { ProjectAPI } from "../../services/ProjectAPI"
 import { Project } from "../../models/Project"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Loadding } from "../layouts/Loadding"
 import { IProject } from "../../interfaces/IProject"
 import { CreateForm } from "../layouts/CreateForm"
@@ -13,9 +13,11 @@ import { ITask } from "../../interfaces/ITask"
 import { Priority } from "../../enums/Priority"
 import { Status } from "../../enums/Status"
 import { useNavigate, useParams } from "react-router-dom"
+import { userAuthContext } from "../../App"
 
 export const CreateTask: React.FC = ()=>{
     
+    const userAuth = useContext(userAuthContext)
     const [loadding, setLoadding] = useState<boolean>(false);
     const params = useParams()
     const navigate = useNavigate();
@@ -35,6 +37,7 @@ export const CreateTask: React.FC = ()=>{
 
     const create = async ()=>{
         setLoadding(true);
+        TaskAPI.accessToken = userAuth.values.accessToken;
         await TaskAPI.create(formik.values)
         setLoadding(false);
     };

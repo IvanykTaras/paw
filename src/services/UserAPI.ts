@@ -7,7 +7,12 @@ export class UserAPI {
     private static ulr = "http://localhost:8000/api/user"
 
 
-   
+    static async getAll(): Promise<User[]> {
+        const response = await fetch(this.ulr,{method: "GET"})
+        const data = await response.json();
+        console.dir(data)
+        return data.map( (u: User) => new User(u._id,u.name,u.surname,u.role,u.password)) 
+    }
 
     static async getById(id:string): Promise<User> {
         
