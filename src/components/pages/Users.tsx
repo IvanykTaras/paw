@@ -11,15 +11,18 @@ import { Project } from "../../models/Project";
 import { useFormik } from "formik";
 import { Variant } from "../../enums/BootrapEnums";
 import { userAuthContext } from "../../App";
+import { User } from "../../models/User";
+import { UserAPI } from "../../services/UserAPI";
+import { UserRole } from "../../enums/UserRole";
 
 
 
 
 
-export const Projects: React.FC = ()=>{
+export const Users: React.FC = ()=>{
 
     const userAuth = useContext(userAuthContext)
-    const [projects, setProjects] = useState<Project[] | null>(null);
+    const [users, setUsers] = useState<User[] | null>(null);
     const navigate = useNavigate();
     //Loading
     const [loadding, setLoadding] = useState<boolean>(false);
@@ -28,42 +31,35 @@ export const Projects: React.FC = ()=>{
         initialValues: {
           idFilter:'',
           nameFilter:'',
-          descriptionFilter:''
+          surnameFilter:'',
+          role: 'all'
         },
         onSubmit: ()=>{},
       })
 
 
     //mapping filters
-    const filterIdCb = (p: Project) => p._id.includes(filters.values.idFilter) 
-    const filterNameCb = (p: Project) => p.name.includes(filters.values.nameFilter)
-    const filterDescriptionCb = (p: Project) => p.description.includes(filters.values.descriptionFilter)
+    const filterIdCb = (u: User) => u._id.includes(filters.values.idFilter) 
+    const filterNameCb = (u: User) => u.name.includes(filters.values.nameFilter)
+    const filterSurnameCb = (u: User) => u.surname.includes(filters.values.surnameFilter)
+    const filterRoleCb = (u: User) => filters.values.role == "all" ? true : u.role == filters.values.role
 
 
     useEffect(()=>{
         (async ()=>{
             setLoadding(true)
-            ProjectAPI.accessToken = userAuth.values.accessToken;
-            const projects = await ProjectAPI.getAll()
-            setProjects(projects)
+            const users = await UserAPI.getAll()
+            setUsers(users)
             setLoadding(false)
         })()
     },[]);
 
 
-    const filteredProjects = projects
+    const filteredUsers = users
     ?.filter(filterIdCb)
     .filter(filterNameCb)
-    .filter(filterDescriptionCb)
-
-    const deleteFunc = async (id:string)=>{
-        setLoadding(true)
-        ProjectAPI.accessToken = userAuth.values.accessToken;
-        await ProjectAPI.delete(id);
-        const projects = await ProjectAPI.getAll()
-        setProjects(projects)
-        setLoadding(false)        
-    }
+    .filter(filterSurnameCb)
+    .filter(filterRoleCb)
 
 
     return loadding ? <Loadding/> : <div>
@@ -71,7 +67,7 @@ export const Projects: React.FC = ()=>{
              
             <Form>
                  <InputGroup>
-                 <InputGroup.Text>Project id</InputGroup.Text>
+                 <InputGroup.Text>User id</InputGroup.Text>
                  <Form.Control 
                      id="idFilter"
                      value={filters.values.idFilter}
@@ -81,7 +77,7 @@ export const Projects: React.FC = ()=>{
              </Form>
              <Form>
                  <InputGroup>
-                 <InputGroup.Text>Project name</InputGroup.Text>
+                 <InputGroup.Text>User name</InputGroup.Text>
                  <Form.Control 
                      id="nameFilter"
                      value={filters.values.nameFilter}
@@ -91,32 +87,47 @@ export const Projects: React.FC = ()=>{
              </Form>
              <Form>
                  <InputGroup>
-                 <InputGroup.Text>Project description</InputGroup.Text>
+                 <InputGroup.Text>User surname</InputGroup.Text>
                  <Form.Control 
                      id="descriptionFilter"
-                     value={filters.values.descriptionFilter}
+                     value={filters.values.surnameFilter}
                      onChange={filters.handleChange}
                      />
                  </InputGroup>
              </Form>
+             <Form>
+                <InputGroup>
+                    <InputGroup.Text>User Role</InputGroup.Text>
+                    <Form.Select 
+                        id="role"
+                        value={filters.values.role} 
+                        onChange={filters.handleChange}>
+                        <option value={"all"}>all</option>
+                        { (Object.keys(UserRole) as Array<keyof typeof UserRole>).map((key,id) => {
+                            return <option 
+                                        key={id} 
+                                        value={key.toLowerCase()}
+                                        
+                                        >
+                                    {key}
+                                    </option>;
+                        })}
+                    </Form.Select>
+                </InputGroup>   
+             </Form>           
              
-            <Link to="/projects/create">
-                <Button variant='success'>create project</Button>
-            </Link>
+            
              
      </ActionPanelElement>
 
 
      <MarginElements>
-        { filteredProjects && filteredProjects.length > 0 ? 
-        filteredProjects
-        .filter(filterIdCb)
-        .filter(filterNameCb)
-        .filter(filterDescriptionCb)
-        .map( (p: Project, i: number) => {
+        { filteredUsers && filteredUsers.length > 0 ? 
+        filteredUsers
+        .map( (u: User, i: number) => {
             return (
              <CustomCard key={i}>
-                <Card.Header><b>Id:</b> {p._id}</Card.Header>
+                <Card.Header><b>Id:</b> {u._id}</Card.Header>
                 <Card.Body>
                     <MarginElements>
                         <InputGroup>
@@ -124,32 +135,28 @@ export const Projects: React.FC = ()=>{
                             <Form.Control
                             type="text"
                             disabled
-                            value={p.name}
+                            value={u.name}
                             />
                         </InputGroup>
                         <InputGroup>
-                            <InputGroup.Text id="inputGroupPrepend">Description</InputGroup.Text>
+                            <InputGroup.Text id="inputGroupPrepend">Surname</InputGroup.Text>
                             <Form.Control
                             type="text"
                             disabled
-                            value={p.description}
+                            value={u.surname}
                             />
                         </InputGroup>
+                        <InputGroup>
+                            <InputGroup.Text id="inputGroupPrepend">Role</InputGroup.Text>
+                            <Form.Control
+                            type="text"
+                            disabled
+                            value={u.role}
+                            />
+                        </InputGroup>
+                        
                     </MarginElements>
                 </Card.Body>
-                <Card.Footer>                    
-                    <ButtonGroup>
-                    
-                        <Button onClick={()=>navigate(`/functionality/${p._id}`)}>
-                            Functionalities
-                        </Button>
-                        <Button variant={Variant.secondary} onClick={()=>navigate(`/projects/edit/${p._id}`)}>
-                            update
-                        </Button>
-                        <Button variant={Variant.danger} onClick={()=>deleteFunc(p._id)}>Delet</Button>
-                    </ButtonGroup>
-
-                </Card.Footer>
             </CustomCard>
             )
         })

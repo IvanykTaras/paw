@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { CreateForm } from "../layouts/CreateForm";
 import { MarginElements } from "../layouts/MarginElements";
 import { CustomCard } from "../layouts/CustomCard";
@@ -10,10 +10,14 @@ import { useNavigate } from "react-router-dom";
 import { AuthorizationAPI } from "../../services/AuthorizationAPI";
 import { IUser } from "../../interfaces/IUser";
 import { userAuthContext } from "../../App";
+import { GoogleLogin } from "@react-oauth/google";
+import { decodeToken, useJwt } from "react-jwt";
+import { Loadding } from "../layouts/Loadding";
 
 export const Login: React.FC = ()=>{
 
     const navigate = useNavigate();
+    const [loadding,setLoadding] = useState(false);
     const userAuth = useContext(userAuthContext);
     const formik = useFormik({
         initialValues:{
@@ -26,6 +30,7 @@ export const Login: React.FC = ()=>{
 
 
     const loginUser = async ()=>{
+        setLoadding(true)
         const user = await UserAPI.getById(formik.values.name);
         if(user.password === formik.values.password){
             const newUser:IUser = {
@@ -44,11 +49,29 @@ export const Login: React.FC = ()=>{
         }else{
             alert("login or password is wrong")
         }
+        setLoadding(false)
+    }
+
+
+    const authenticateUser = async (mail: string)=>{
+        setLoadding(true);
+        const data = await AuthorizationAPI.Authentication(mail);
+        if(data && data.userId){
+            userAuth.setFunction({
+                refreshToken: data.refreshToken,
+                accessToken: data.accessToken,
+                userId: data.userId
+            })
+            navigate("/")
+        }else{
+            alert("email doesn't exist")
+        }
+        setLoadding(false)
     }
 
 
 
-    return  <>
+    return  loadding ? <Loadding/>:<>
             <div style={{margin: "15rem auto", width: "30rem"}}>
                 <CustomCard>
                     <Card.Header>
@@ -76,6 +99,18 @@ export const Login: React.FC = ()=>{
                     </Card.Body>
                     <Card.Footer>
                         <Button onClick={()=>loginUser()}>Login</Button>
+                        <button className="btn" onClick={()=>loginUser()}>
+                            
+                        <GoogleLogin
+                            onSuccess={credentialResponse => {
+                                const u: {email: string} | null = decodeToken(credentialResponse.credential as string)
+                                authenticateUser(u?.email as string)
+                            }}
+                            onError={() => {
+                                alert('Login Failed');
+                            }}
+                        />
+                        </button>
                     </Card.Footer>
                 </CustomCard>
             </div>

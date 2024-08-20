@@ -23,6 +23,10 @@ import { CreateFunctionality } from './components/pages/CreateFunctionality.tsx'
 import { Functionalities } from './components/pages/Functionalities.tsx';
 import { Tasks } from './components/pages/Tasks.tsx';
 import { Login } from './components/pages/Login.tsx';
+import { UpdateProject } from './components/pages/UpdateProject.tsx';
+import { UpdateFunctionality } from './components/pages/UpdateFunctionality.tsx';
+import { Users } from './components/pages/Users.tsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const router = createBrowserRouter([
   {
@@ -42,8 +46,16 @@ const router = createBrowserRouter([
         element: <CreateProject/>
       },
       {
+        path: "/projects/edit/:projectId",
+        element: <UpdateProject/>
+      },
+      {
         path: "/functionality/:projectId",
         element: <Functionalities/>
+      },
+      {
+        path: "/functionality/edit/:functionalityId",
+        element: <UpdateFunctionality/>
       },
       {
         path: "/functionality/:projectId/create",
@@ -57,6 +69,10 @@ const router = createBrowserRouter([
         path: "/task/:functionalityId/create",
         element: <CreateTask/>
       },
+      {
+        path: "/user",
+        element: <Users/>
+      },
       { 
         path: "/settings",
         element: <Settings/>
@@ -69,6 +85,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <GoogleOAuthProvider clientId='855465720082-qof4h3nvheh3mjamtbkdu6pa7sfut1lo.apps.googleusercontent.com'>
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
   </React.StrictMode>
 )

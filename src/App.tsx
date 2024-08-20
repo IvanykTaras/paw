@@ -5,6 +5,7 @@ import { createContext, SetStateAction, useContext, useEffect, useState } from '
 import { Theme, Variant } from './enums/BootrapEnums';
 import { ISettings, ISettingsContext } from './interfaces/Setting';
 import { MarginElements } from './components/layouts/MarginElements';
+import { Loadding } from './components/layouts/Loadding';
 
 
 
@@ -48,9 +49,11 @@ export const userAuthContext = createContext<IUserAuth>({
 
 
 function App() {  
+  const [loadding, setLoadding] = useState(false);
   const [settingProps, setSettingProps] = useState<ISettings>(useContext(SettingsContext).values);
   const outlet = useOutlet();
   const navigate = useNavigate();
+
   
   const [userAuth, setUserAuth] = useState<{
     refreshToken: string,
@@ -74,11 +77,12 @@ function App() {
     <div className='body'>
     <userAuthContext.Provider value={{values: userAuth, setFunction: (e)=>setUserAuth(e)}}>
       <SettingsContext.Provider value={ {values: settingProps, setFunction: (e:ISettings)=>setSettingProps(e)} } >
-        {userAuth.accessToken.length > 0 ? <SideNavBar/> : <></>}
-        <Container fluid style={{paddingTop: "1rem"}}>
+        {userAuth.accessToken.length > 0 ? <SideNavBar setLoadding={setLoadding}/> : <></>}
+        {loadding ? <Loadding/> : 
+          <Container fluid style={{paddingTop: "1rem"}}>
           {
             outlet ?  <Outlet/> : <>
-              <div style={{ textAlign: "center", marginTop: "15rem"}}>
+              <div style={{ textAlign: "center", marginTop: "15rem", color:"white"}}>
                 <MarginElements>
                   <h1 style={{fontSize: "10rem"}} className='animate__animated  animate__fadeInDown'>Manage me</h1>
                   <p style={{fontSize: "3rem"}} className='animate__animated  animate__fadeInRight'> <i>"Mam nadzieje że to działa"</i></p>
@@ -87,7 +91,8 @@ function App() {
               </div>
             </>
           }
-        </Container>
+          </Container>
+        }
       </SettingsContext.Provider>
     </userAuthContext.Provider>
     </div>

@@ -23,7 +23,6 @@ export class TaskAPI {
         
         const response = await fetch(this.ulr,{method: "GET", headers:{"Authorization": "Bearer " + this.accessToken}})
         const data = await response.json();
-        console.dir(data)
         return data.map( (t: Task) => new Task(t._id,t.name,t.description,t.priority, t.functionalityId, t.estimatedTime, t.status, t.creationDate, t.startDate, t.completionDate, t.userId))
     }
 
@@ -31,7 +30,6 @@ export class TaskAPI {
         
         const response = await fetch(this.ulr + "/" + id,{method: "GET", headers:{"Authorization": "Bearer " + this.accessToken}})
         const t = await response.json();
-        console.dir(t)
         return new Task(t._id,t.name,t.description,t.priority, t.functionalityId, t.estimatedTime, t.status, t.creationDate, t.startDate, t.completionDate, t.userId)
     }
 
@@ -44,6 +42,16 @@ export class TaskAPI {
                "Content-Type": "application/json" 
             },
             body: JSON.stringify(task)
+        }).catch(e=>console.error(e));
+    }
+
+    static async delete(id: string){
+        await fetch(this.ulr + "/" + id,{
+            method: "DELETE",
+            headers:{
+                "Authorization": "Bearer " + this.accessToken,
+                "Content-Type": "application/json" 
+            }
         }).catch(e=>console.error(e));
     }
 }

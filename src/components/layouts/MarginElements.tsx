@@ -4,7 +4,7 @@ import { IPropsChildren } from "../../interfaces/IPropsChildren"
 
 
 export const MarginElements: React.FC<IPropsChildren> = ({children})=>{
-    return <AddMargin>{children}</AddMargin>
+    return <AddMargin className="animate__animated animate__fadeIn">{children}</AddMargin>
 }
 
 const AddMargin = styled.div`

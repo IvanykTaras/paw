@@ -16,6 +16,7 @@ import { useFormik } from "formik";
 import { UserAPI } from "../../services/UserAPI";
 import { UserRole } from "../../enums/UserRole";
 import { userAuthContext } from "../../App";
+import { Loadding } from "../layouts/Loadding";
 
 export const Tasks: React.FC = ()=>{
 
@@ -34,7 +35,6 @@ export const Tasks: React.FC = ()=>{
             TaskAPI.accessToken = userAuth.values.accessToken;
             const tasksList = await TaskAPI.getAll() 
             setTasks(tasksList)
-            console.log(tasksList)
             setLoadding(false)
         })()
     },[findTask]);
@@ -79,7 +79,7 @@ export const Tasks: React.FC = ()=>{
             showTask(findTask?._id as string);
             setLoadding(false)
         }else{
-            alert("Wrong user");
+            alert("Wrong user | user shoud be DevOps or Developer");
             setLoadding(false)
         }
         
@@ -102,7 +102,17 @@ export const Tasks: React.FC = ()=>{
         setLoadding(false)
     }
 
-    return loadding ? <Loading/> : <>    
+    const deleteFunc = async (id:string)=>{
+        setLoadding(true)
+        TaskAPI.accessToken = userAuth.values.accessToken;
+        await TaskAPI.delete(id);
+        const tasks = await TaskAPI.getAll()
+        setTasks(tasks)
+        setShow(false);
+        setLoadding(false)        
+    }
+
+    return loadding ? <Loadding/> : <div>    
         <ActionPanelElement>
             <Link to={`/task/${functionalityId}/create`}>
             <Button>Create task</Button>
@@ -339,9 +349,13 @@ export const Tasks: React.FC = ()=>{
                     <Button variant={Variant.secondary} onClick={()=>completeTask()}>
                         Complete task
                     </Button>)}
+                { findTask?.status === Status.Done && (
+                <Button variant={Variant.danger} onClick={()=>deleteFunc(findTask._id)}>
+                    Delete task
+                </Button>)}
             </Modal.Footer>
         </Modal>
-    </>
+    </div>
 } 
 
 

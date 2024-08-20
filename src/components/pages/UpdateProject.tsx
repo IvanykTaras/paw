@@ -2,16 +2,17 @@ import { Button, Card, Form } from "react-bootstrap"
 import { CustomCard } from "../layouts/CustomCard"
 import { ProjectAPI } from "../../services/ProjectAPI"
 import { Project } from "../../models/Project"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Loadding } from "../layouts/Loadding"
 import { IProject } from "../../interfaces/IProject"
 import { CreateForm } from "../layouts/CreateForm"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { userAuthContext } from "../../App"
 import { MarginElements } from "../layouts/MarginElements"
 
-export const CreateProject: React.FC = ()=>{
+export const UpdateProject: React.FC = ()=>{
     const navigate = useNavigate();
+    const params = useParams();
     const userAuth = useContext(userAuthContext)
     const [loadding, setLoadding] = useState<boolean>(false);
     const [formData, setFormData] = useState<IProject>({
@@ -19,11 +20,23 @@ export const CreateProject: React.FC = ()=>{
         description: ""
     });
 
+    useEffect(()=>{
+        (async ()=>{
+            setLoadding(true)
+            ProjectAPI.accessToken = userAuth.values.accessToken;
+            const project = await ProjectAPI.getById(params.projectId as string);
+            setFormData({
+                name: project.name,
+                description: project.description
+            })
+            setLoadding(false)
+        })()
+    },[])
 
-    const create = async ()=>{
+    const update = async ()=>{
         setLoadding(true);
         ProjectAPI.accessToken = userAuth.values.accessToken;
-        await ProjectAPI.create(formData)
+        await ProjectAPI.update(formData,params.projectId as string)
         setLoadding(false);
         navigate("/projects");
     };
@@ -31,7 +44,7 @@ export const CreateProject: React.FC = ()=>{
 
 
     return loadding ? <Loadding/> : <>
-        <CreateForm title="Create Project" type="create" buttonFunc={create}>
+        <CreateForm title="Edit Project" type="update" buttonFunc={update}>
             <MarginElements>
             <Form.Group>
                 <Form.Label>Name</Form.Label>

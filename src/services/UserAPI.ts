@@ -10,7 +10,6 @@ export class UserAPI {
     static async getAll(): Promise<User[]> {
         const response = await fetch(this.ulr,{method: "GET"})
         const data = await response.json();
-        console.dir(data)
         return data.map( (u: User) => new User(u._id,u.name,u.surname,u.role,u.password)) 
     }
 
@@ -18,7 +17,6 @@ export class UserAPI {
         
         const response = await fetch(this.ulr + "/" + id,{method: "GET"})
         const u: User = await response.json();
-        console.dir(u)
         return new User(u._id,u.name,u.surname,u.role,u.password);
     }
 

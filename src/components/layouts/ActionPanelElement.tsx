@@ -11,7 +11,7 @@ export const ActionPanelElement: React.FC<IPropsChildren> = ({children})=>{
 
     const settingsContext = useContext(SettingsContext);
 
-    return <ElementPanel bg={settingsContext.values.nav.bg} data-bs-theme={settingsContext.values.nav.dataBsTheme}>
+    return <ElementPanel className="animate__animated animate__slideInDown" bg={settingsContext.values.nav.bg} data-bs-theme={settingsContext.values.nav.dataBsTheme}>
         {children}
     </ElementPanel>;
 }

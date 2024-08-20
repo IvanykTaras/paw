@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { useState, useEffect, useContext } from "react";
-import { Form, InputGroup, Button, Card, Alert } from "react-bootstrap";
-import { Link, useLoaderData, useParams } from "react-router-dom";
+import { Form, InputGroup, Button, Card, Alert, ButtonGroup } from "react-bootstrap";
+import { Link, Navigate, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../models/Project";
 import { ProjectAPI } from "../../services/ProjectAPI";
 import { ActionPanelElement } from "../layouts/ActionPanelElement";
@@ -16,7 +16,7 @@ import { Priority } from "../../enums/Priority";
 import { userAuthContext } from "../../App";
 
 export const Functionalities: React.FC = ()=>{
-
+    const navigate = useNavigate();
     const userAuth = useContext(userAuthContext)
     const [functionalities, setfunctionalities] = useState<Functionality[] | null>(null);
 
@@ -58,6 +58,15 @@ export const Functionalities: React.FC = ()=>{
         })()
     },[]);
 
+    const deleteFunc = async (id:string)=>{
+        setLoadding(true)
+        FunctionalityAPI.accessToken = userAuth.values.accessToken;
+        await FunctionalityAPI.delete(id);
+        const funcs = await FunctionalityAPI.getAll()
+        setfunctionalities(funcs)
+        setLoadding(false)        
+    }
+
 
 
     const filteredFunctionalities = functionalities
@@ -70,7 +79,7 @@ export const Functionalities: React.FC = ()=>{
 
 
     return loadding ? <Loadding/> : <div>
-    <ActionPanelElement>
+    <ActionPanelElement >
     <Form>
                  <InputGroup>
                  <InputGroup.Text>Project id</InputGroup.Text>
@@ -221,9 +230,13 @@ export const Functionalities: React.FC = ()=>{
                     </MarginElements>
                 </Card.Body>
                 <Card.Footer>                    
-                    <Link to={`/task/${f._id}`}>
-                        <Button>Tasks</Button>
-                    </Link>
+                    
+                    <ButtonGroup>
+                        <Button onClick={()=>navigate(`/task/${f._id}`)}>Tasks</Button>
+                        <Button variant={Variant.secondary} onClick={()=>navigate(`/functionality/edit/${f._id}`)}>update</Button>
+                        <Button variant={Variant.danger} onClick={()=>deleteFunc(f._id)}>Delete</Button>
+                    </ButtonGroup>
+                    
                 </Card.Footer>
             </CustomCard>
             )

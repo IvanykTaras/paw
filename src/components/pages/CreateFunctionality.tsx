@@ -34,8 +34,8 @@ export const CreateFunctionality: React.FC = ()=>{
         setLoadding(true);
         FunctionalityAPI.accessToken = userAuth.values.accessToken;
         await FunctionalityAPI.create(formik.values)
-        setLoadding(false);
         navigate(`/functionality/${params.projectId}`);
+        setLoadding(false);
     };
 
 
@@ -49,7 +49,7 @@ export const CreateFunctionality: React.FC = ()=>{
     
 
     return loadding ? <Loadding/> : <>
-        <CreateForm title="Create Functionality" buttonFunc={submit}>
+        <CreateForm title="Create Functionality" type="create" buttonFunc={submit}>
             <MarginElements>
                 <Form.Group>
                     <Form.Label>Name</Form.Label>

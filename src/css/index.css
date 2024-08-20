@@ -1,3 +1,9 @@
+html{
+    
+}
+
 .body{
-    margin-left: 70px;
+    min-height: 100vh;
+    padding-left: 70px;
+    background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%);
 }

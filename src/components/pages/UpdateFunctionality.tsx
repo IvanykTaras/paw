@@ -1,57 +1,75 @@
-import { Button, Card, Form, Modal } from "react-bootstrap"
+import { Button, Card, Form, InputGroup } from "react-bootstrap"
 import { CustomCard } from "../layouts/CustomCard"
-import { ProjectAPI } from "../../services/ProjectAPI"
-import { Project } from "../../models/Project"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Loadding } from "../layouts/Loadding"
 import { IProject } from "../../interfaces/IProject"
 import { CreateForm } from "../layouts/CreateForm"
-import { MarginElements } from "../layouts/MarginElements"
-import { TaskAPI } from "../../services/TaskAPI"
 import { useFormik } from "formik"
-import { ITask } from "../../interfaces/ITask"
+import { IFunctionality } from "../../interfaces/IFunctionality"
 import { Priority } from "../../enums/Priority"
-import { Status } from "../../enums/Status"
+import { MarginElements } from "../layouts/MarginElements"
+import { FunctionalityAPI } from "../../services/FunctionalityAPI"
 import { useNavigate, useParams } from "react-router-dom"
 import { userAuthContext } from "../../App"
+import { Status } from "../../enums/Status"
 
-export const CreateTask: React.FC = ()=>{
+export const UpdateFunctionality: React.FC = ()=>{
     
-    const userAuth = useContext(userAuthContext)
     const [loadding, setLoadding] = useState<boolean>(false);
-    const params = useParams()
+    const userAuth = useContext(userAuthContext);
     const navigate = useNavigate();
+    const params = useParams();
 
-    const formik = useFormik<ITask>({
+    const formik = useFormik<IFunctionality>({
         initialValues: {
             name: '',
             description: '',
             priority: Priority.Low,
-            functionalityId: params.functionalityId as string,
-            estimatedTime: new Date,
-            status: Status.Todo
+            status: Status.Todo,
+            projectId: params.projectId as string,
+            userId: userAuth.values.userId
         },
         onSubmit: (values)=>{}
     });
 
 
-    const create = async ()=>{
-        setLoadding(true);
-        TaskAPI.accessToken = userAuth.values.accessToken;
-        await TaskAPI.create(formik.values)
-        setLoadding(false);
-    };
+    useEffect(()=>{
+        (async ()=>{
+            setLoadding(true)
+            FunctionalityAPI.accessToken = userAuth.values.accessToken;
+            const f = await FunctionalityAPI.getById(params.functionalityId as string);
+            formik.setValues({
+                name: f.name,
+                description: f.description,
+                priority: f.priority,
+                status: f.status,
+                projectId: f.projectId,
+                userId: f.userId
+            })
+            setLoadding(false)
+        })()
+    },[])
+
 
     const submit = async ()=> {
-        formik.handleSubmit()
-        await create();
-        navigate(`/task/${params.functionalityId}`);
-
+        setLoadding(true)
+        await update();
+        setLoadding(false)
     }
 
+    const update = async ()=>{
+        setLoadding(true);
+        FunctionalityAPI.accessToken = userAuth.values.accessToken;
+        await FunctionalityAPI.update(formik.values, params.functionalityId as string)
+        setLoadding(false);
+        navigate(`/functionality/${formik.values.projectId}`);
+    };
+
+    
+
     return loadding ? <Loadding/> : <>
-        <CreateForm title="Create Task" type="create" buttonFunc={submit}>
-            <MarginElements >
+        <CreateForm title="Edit Functionality" type="update" buttonFunc={submit}>
+            <MarginElements>
                 <Form.Group>
                     <Form.Label>Name</Form.Label>
                     <Form.Control
@@ -87,7 +105,7 @@ export const CreateTask: React.FC = ()=>{
                         })}
                     </Form.Select>
                 </Form.Group>
-                {/* <Form.Group>
+                <Form.Group>
                     <Form.Label>Status</Form.Label>
                     <Form.Select 
                         id="status"
@@ -103,35 +121,27 @@ export const CreateTask: React.FC = ()=>{
                                     </option>;
                         })}
                     </Form.Select>
-                </Form.Group> */}
+                </Form.Group>
                 <Form.Group>
-                    <Form.Label>Functionality Id</Form.Label>
+                    <Form.Label>Project Id</Form.Label>
                     <Form.Control
                         disabled
                         type="text"
                         onChange={formik.handleChange}
-                        value={formik.values.functionalityId}
+                        value={formik.values.projectId}
                         />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>estimated Time</Form.Label>
+                    <Form.Label>User Id</Form.Label>
                     <Form.Control
-                        id="estimatedTime"
-                        type="date"
+                        disabled
+                        type="text"
                         onChange={formik.handleChange}
-                        value={formik.values.estimatedTime.toString()}
+                        value={formik.values.userId}
                         />
                 </Form.Group>
-
-
             </MarginElements>
         </CreateForm>
-
-
-
-
-
-      
     </>
 }
 
